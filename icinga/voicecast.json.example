@@ -1,0 +1,5 @@
+{
+  "url": "https://voicecast.example.com",
+  "api_key": "REPLACE_WITH_VOICECAST_API_KEY",
+  "callflow": "550e8400-e29b-41d4-a716-446655440000"
+}

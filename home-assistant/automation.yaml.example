@@ -1,0 +1,15 @@
+alias: Call when a critical sensor becomes unavailable
+triggers:
+  - trigger: state
+    entity_id: binary_sensor.critical_service
+    to: "off"
+    for: "00:02:00"
+actions:
+  - action: script.voicecast_call
+    data:
+      to: "+31612345678"
+      callflow: "550e8400-e29b-41d4-a716-446655440000"
+      message: >-
+        Home Assistant alert. Critical service is unavailable at
+        {{ now().strftime('%H:%M') }}.
+mode: single

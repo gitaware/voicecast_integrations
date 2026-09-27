@@ -1,0 +1,38 @@
+{
+  "name": "VoiceCast - Place call",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "voicecast-trigger",
+      "name": "Called by another workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [260, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $json.voicecast_url.replace(/\\/$/, '') + '/api/call/v2' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [{ "name": "Content-Type", "value": "application/json" }] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ { callee: $json.callee, callflow: $json.callflow, calldate: $now.toUTC().toISO(), parameters: { message: $json.message, alert_text: $json.message, source: 'n8n' } } }}",
+        "options": { "redirect": { "redirect": { "followRedirects": false } }, "timeout": 20000 }
+      },
+      "id": "voicecast-request",
+      "name": "Queue VoiceCast call",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [520, 300]
+    }
+  ],
+  "connections": {
+    "Called by another workflow": { "main": [[{ "node": "Queue VoiceCast call", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" },
+  "active": false,
+  "versionId": "550e8400-e29b-41d4-a716-446655440000"
+}

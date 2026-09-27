@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "title": "VoiceCast",
+  "required": ["url", "api_key"],
+  "properties": {
+    "url": {
+      "type": "string",
+      "title": "Tenant URL",
+      "description": "HTTPS tenant base URL without /api",
+      "format": "uri"
+    },
+    "api_key": {
+      "type": "string",
+      "title": "API key",
+      "description": "Use a Windmill secret variable reference such as $var:f/voicecast/api_key",
+      "format": "password"
+    },
+    "default_callflow": {
+      "type": "string",
+      "title": "Default callflow UUID"
+    }
+  }
+}

@@ -1,0 +1,59 @@
+# Include this file as a Home Assistant package. Store every value in secrets.yaml.
+rest_command:
+  voicecast_call:
+    url: !secret voicecast_api_url
+    method: POST
+    headers:
+      authorization: !secret voicecast_authorization
+      accept: "application/json"
+    content_type: "application/json; charset=utf-8"
+    verify_ssl: true
+    timeout: 20
+    payload: >-
+      {{ {
+        "callee": to,
+        "callflow": callflow,
+        "calldate": now().isoformat(),
+        "parameters": {
+          "message": message,
+          "alert_text": message,
+          "source": "home_assistant"
+        }
+      } | to_json }}
+
+script:
+  voicecast_call:
+    alias: VoiceCast phone call
+    description: Queue a spoken VoiceCast notification
+    mode: queued
+    max: 10
+    fields:
+      message:
+        name: Message
+        required: true
+        selector:
+          text:
+            multiline: true
+      to:
+        name: Telephone number
+        required: true
+        selector:
+          text:
+      callflow:
+        name: VoiceCast callflow UUID
+        required: true
+        selector:
+          text:
+    sequence:
+      - action: rest_command.voicecast_call
+        data:
+          message: "{{ message }}"
+          to: "{{ to }}"
+          callflow: "{{ callflow }}"
+        response_variable: voicecast_response
+      - if:
+          - condition: template
+            value_template: "{{ voicecast_response.status != 201 }}"
+        then:
+          - stop: "VoiceCast rejected the call"
+            error: true

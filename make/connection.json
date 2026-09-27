@@ -1,0 +1,4 @@
+[
+  {"name":"baseUrl","type":"url","label":"VoiceCast tenant URL","required":true},
+  {"name":"apiKey","type":"password","label":"VoiceCast API key","required":true}
+]

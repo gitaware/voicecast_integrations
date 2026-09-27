@@ -1,0 +1,11 @@
+{{- $message := tmpl.Exec "default.message" . -}}
+{{- coll.Dict
+    "callee" .Vars.callee
+    "callflow" .Vars.callflow
+    "calldate" ((time.Now).UTC.Format "2006-01-02T15:04:05Z07:00")
+    "parameters" (coll.Dict
+        "message" $message
+        "alert_text" $message
+        "source" "grafana"
+        "status" .Status)
+    | data.ToJSON -}}

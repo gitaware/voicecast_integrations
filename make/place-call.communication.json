@@ -1,0 +1,7 @@
+{
+  "url": "{{connection.baseUrl}}/api/call/v2",
+  "method": "POST",
+  "headers": {"Authorization":"Bearer {{connection.apiKey}}","Content-Type":"application/json"},
+  "body": {"callee":"{{parameters.callee}}","callflow":"{{parameters.callflow}}","calldate":"{{formatDate(now; \"YYYY-MM-DDTHH:mm:ss.SSS[Z]\"; \"UTC\")}}","parameters":{"message":"{{parameters.message}}","alert_text":"{{parameters.message}}","source":"make"}},
+  "response": {"error":{"message":"VoiceCast did not accept the call (HTTP {{statusCode}}). Check Calls v2 before retrying."},"output":"{{body.data}}"}
+}

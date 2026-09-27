@@ -1,0 +1,5 @@
+<script type="text/javascript">
+RED.nodes.registerType('voicecast-call',{category:'function',color:'#7656d6',defaults:{name:{value:''},url:{value:'',required:true},callee:{value:''},callflow:{value:'',required:true}},credentials:{apiKey:{type:'password'}},inputs:1,outputs:1,icon:'font-awesome/fa-phone',label:function(){return this.name||'VoiceCast call';}});
+</script>
+<script type="text/html" data-template-name="voicecast-call"><div class="form-row"><label for="node-input-url">Tenant URL</label><input id="node-input-url"></div><div class="form-row"><label for="node-input-apiKey">API key</label><input id="node-input-apiKey" type="password"></div><div class="form-row"><label for="node-input-callee">Number</label><input id="node-input-callee"></div><div class="form-row"><label for="node-input-callflow">Callflow</label><input id="node-input-callflow"></div></script>
+<script type="text/html" data-help-name="voicecast-call"><p>Queues a VoiceCast call. Set <code>msg.message</code> or <code>msg.payload</code>; optionally override with <code>msg.callee</code> and <code>msg.callflow</code>.</p></script>

@@ -1,0 +1,24 @@
+<?php
+
+return array(
+    'enabled' => true,
+    'url' => 'https://voicecast.example.com',
+    'api_key' => 'replace-with-a-voicecast-api-key',
+    'callflow' => '550e8400-e29b-41d4-a716-446655440000',
+    'rules' => array(
+        'Cases' => array(
+            'when_field' => 'priority',
+            'when_values' => array('P1', 'High'),
+            'only_on_change' => true,
+            'phone_field' => 'voicecast_phone_c',
+            'message' => 'Critical CRM case {case_number}: {name}. Status {status}.',
+        ),
+        'Leads' => array(
+            'when_field' => 'status',
+            'when_values' => array('Converted'),
+            'only_on_change' => true,
+            'phone_field' => 'phone_work',
+            'message' => 'Lead {first_name} {last_name} has status {status}.',
+        ),
+    ),
+);

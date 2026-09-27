@@ -1,0 +1,5 @@
+[
+  {"name":"callee","type":"text","label":"Telephone number","required":true,"help":"International E.164 format, for example +31612345678"},
+  {"name":"callflow","type":"text","label":"Callflow UUID","required":true},
+  {"name":"message","type":"text","label":"Message","required":true,"multiline":true}
+]

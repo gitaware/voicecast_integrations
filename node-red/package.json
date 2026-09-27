@@ -1,0 +1,1 @@
+{"name":"node-red-contrib-voicecast","version":"1.0.0","private":true,"engines":{"node":">=18"},"node-red":{"nodes":{"voicecast":"voicecast.js"}},"scripts":{"test":"node --test test.cjs"}}

@@ -46,7 +46,7 @@ parameters.
 One Grafana notification group creates one call. The payload contains the
 current UTC time, so VoiceCast queues the call rather than holding Grafana's
 request open. A successful webhook delivery only confirms queueing. Disable
-Grafana retries where possible; after a timeout, check Calls v2 first.
+Grafana retries where possible; after a timeout, check Calls first.
 
 | Error | Check |
 | --- | --- |

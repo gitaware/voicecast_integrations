@@ -50,7 +50,7 @@ recipient, callflow and text. The package script uses queued mode with `max: 10`
 adjust these values in `voicecast.yaml` if another local queue policy is needed.
 
 The REST command timeout is 20 seconds, verifies TLS, and expects HTTP 201. A
-successful action means the call was queued. Check Calls v2 before retrying an
+successful action means the call was queued. Check Calls before retrying an
 ambiguous failure.
 
 Reference: [Home Assistant RESTful Command](https://www.home-assistant.io/integrations/rest_command/).

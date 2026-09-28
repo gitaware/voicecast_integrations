@@ -8,6 +8,10 @@ installation and configuration guide.
 A successful API response means the call was queued. VoiceCast's dispatcher
 places the call asynchronously and records the final status and callflow events.
 
+## Before installing
+
+You need a VoiceCast tenant URL, API key and callflow UUID. You can get these from CloudAware by requesting Voicecast access from voicecast@cloudaware.eu
+
 ## Monitoring and alerting
 
 | Logo | Integration | What it does |
@@ -39,17 +43,3 @@ places the call asynchronously and records the final status and callflow events.
 | [<img src="salesforce/salesforce.svg" alt="Salesforce" width="38" height="38">](salesforce/) | [Salesforce](salesforce/) | Deploy an invocable Apex action for Salesforce Flow. |
 | [<img src="sugarcrm/sugarcrm.svg" alt="SugarCRM" width="38" height="38">](sugarcrm/) | [SugarCRM](sugarcrm/) | Trigger calls when configured Case or Lead fields change. |
 | [<img src="suitecrm/suitecrm.svg" alt="SuiteCRM" width="48" height="32">](suitecrm/) | [SuiteCRM](suitecrm/) | Trigger calls from SuiteCRM Case and Lead state changes. |
-
-## Before testing
-
-You need a VoiceCast tenant URL, API key and callflow UUID. The VoiceCast call
-dispatcher must be running, and the server or service using an integration must
-be able to reach the tenant over HTTPS. Tests can place real telephone calls, so
-use a controlled recipient and callflow.
-
-Repository maintainers can run the integration contract tests from the project
-root:
-
-```bash
-python3 -m unittest integrations/test_integration_contracts.py -v
-```

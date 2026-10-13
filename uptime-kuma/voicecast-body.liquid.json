@@ -1,0 +1,12 @@
+{
+  "callee": "REPLACE_WITH_E164_NUMBER",
+  "callflow": "REPLACE_WITH_CALLFLOW_UUID",
+  "parameters": {
+    "message": {{ msg | json }},
+    "alert_text": {{ msg | json }},
+    "source": "uptime_kuma",
+    "status": {{ status | json }},
+    "monitor": {{ name | json }},
+    "target": {{ hostnameOrURL | json }}
+  }
+}

@@ -20,6 +20,11 @@ You need a VoiceCast tenant URL, API key and callflow UUID. You can get these fr
 | [<img src="icinga/icinga.svg" alt="Icinga" width="38" height="38">](icinga/) | [Icinga 2](icinga/) | Send host and service notifications through a VoiceCast callflow. |
 | [<img src="prtg/prtg.svg" alt="PRTG" width="38" height="38">](prtg/) | [PRTG Network Monitor](prtg/) | Run a PowerShell notification client when PRTG raises an alarm. |
 | [<img src="grafana/grafana.svg" alt="Grafana" width="38" height="38">](grafana/) | [Grafana Alerting](grafana/) | Use a webhook contact point to call recipients for Grafana alert groups. |
+| [<img src="librenms/librenms.svg" alt="LibreNMS" width="38" height="38">](librenms/) | [LibreNMS](librenms/) | Send device and service alerts through the native API transport. |
+| [<img src="uptime-kuma/uptime-kuma.svg" alt="Uptime Kuma" width="38" height="38">](uptime-kuma/) | [Uptime Kuma](uptime-kuma/) | Call responders from built-in webhook notifications. |
+| [<img src="checkmk/checkmk.svg" alt="Checkmk" width="38" height="38">](checkmk/) | [Checkmk](checkmk/) | Run a site-local notification script for host and service state changes. |
+| [<img src="mikrotik/mikrotik.svg" alt="MikroTik" width="38" height="38">](mikrotik/) | [MikroTik RouterOS](mikrotik/) | Queue spoken alerts directly from Netwatch, the scheduler or another on-router script. |
+| [<img src="fortigate/fortigate.svg" alt="FortiGate" width="38" height="38">](fortigate/) | [FortiGate](fortigate/) | Turn FortiGate security, SD-WAN and system events into spoken telephone alerts. |
 
 ## Automation and orchestration
 
@@ -34,6 +39,14 @@ You need a VoiceCast tenant URL, API key and callflow UUID. You can get these fr
 | [<img src="zapier/zapier.svg" alt="Zapier" width="38" height="38">](zapier/) | [Zapier](zapier/) | Add a Place VoiceCast Call action to Zaps. |
 | [<img src="make/make.svg" alt="Make" width="38" height="38">](make/) | [Make](make/) | Add a VoiceCast action module to Make scenarios. |
 | [<img src="windmill/windmill.svg" alt="Windmill" width="38" height="38">](windmill/) | [Windmill](windmill/) | Place calls from scripts, schedules, webhooks, Flows and Apps. |
+
+## Developer libraries
+
+| Logo | Integration | What it does |
+| :---: | --- | --- |
+| [<img src="php/php.svg" alt="PHP" width="38" height="38">](php/) | [PHP](php/) | Add immediate and scheduled calls to PHP applications with a reusable client class. |
+| [<img src="python/python.svg" alt="Python" width="38" height="38">](python/) | [Python](python/) | Add immediate and scheduled calls to Python applications with a standard-library client class. |
+| [<img src="mcp/mcp.svg" alt="Model Context Protocol" width="38" height="38">](mcp/) | [Model Context Protocol](mcp/) | Connect MCP clients to tenant-scoped callflow and call tools over STDIO or authenticated HTTP. |
 
 ## CRM and customer workflows
 

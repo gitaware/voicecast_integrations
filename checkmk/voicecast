@@ -1,0 +1,143 @@
+#!/usr/bin/env python3
+# VoiceCast phone call
+"""Checkmk notification script for the VoiceCast Calls v2 API."""
+
+from __future__ import annotations
+
+import json
+import os
+import re
+import sys
+from pathlib import Path
+from typing import Any, Mapping
+from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
+from urllib.request import HTTPRedirectHandler, Request, build_opener
+
+
+class NoRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        return None
+
+
+class ConfigurationError(ValueError):
+    pass
+
+
+def clean(value: object, limit: int = 500) -> str:
+    return " ".join(str(value or "").split())[:limit]
+
+
+def load_config(environ: Mapping[str, str]) -> dict[str, Any]:
+    default = Path(environ.get("OMD_ROOT", "")) / "etc/voicecast.json"
+    path = Path(environ.get("VOICECAST_CONFIG", str(default)))
+    try:
+        config = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        raise ConfigurationError(f"cannot read valid configuration at {path}") from exc
+
+    required = ("url", "api_key", "callflow", "callee")
+    if not isinstance(config, dict) or any(not config.get(key) for key in required):
+        raise ConfigurationError("configuration requires url, api_key, callflow and callee")
+    parsed = urlsplit(str(config["url"]).rstrip("/"))
+    if parsed.scheme != "https" or not parsed.netloc or parsed.username or parsed.query or parsed.fragment:
+        raise ConfigurationError("url must be an HTTPS tenant base URL without credentials, query or fragment")
+    if parsed.path not in ("", "/"):
+        raise ConfigurationError("url must not include a path such as /api")
+    if not re.fullmatch(r"\+[1-9]\d{7,14}", str(config["callee"])):
+        raise ConfigurationError("callee must be an E.164 number")
+    if not re.fullmatch(r"[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}", str(config["callflow"])):
+        raise ConfigurationError("callflow must be a UUID")
+    timeout = config.get("timeout", 20)
+    if isinstance(timeout, bool) or not isinstance(timeout, (int, float)) or not 1 <= timeout <= 60:
+        raise ConfigurationError("timeout must be between 1 and 60 seconds")
+    config["url"] = str(config["url"]).rstrip("/")
+    config["timeout"] = float(timeout)
+    return config
+
+
+def event_parameters(environ: Mapping[str, str]) -> dict[str, str]:
+    service = clean(environ.get("NOTIFY_SERVICEDESC"))
+    state_key = "NOTIFY_SERVICESTATE" if service else "NOTIFY_HOSTSTATE"
+    output_key = "NOTIFY_SERVICEOUTPUT" if service else "NOTIFY_HOSTOUTPUT"
+    return {
+        "source": "checkmk",
+        "notification_type": clean(environ.get("NOTIFY_NOTIFICATIONTYPE"), 80),
+        "host": clean(environ.get("NOTIFY_HOSTNAME") or environ.get("NOTIFY_HOSTALIAS"), 200),
+        "service": service,
+        "state": clean(environ.get(state_key), 80),
+        "output": clean(environ.get(output_key), 1000),
+    }
+
+
+def build_message(parameters: Mapping[str, str]) -> str:
+    subject = f"Checkmk {parameters['notification_type'] or 'notification'}."
+    parts = [subject, f"Host {parameters['host'] or 'unknown' }."]
+    if parameters["service"]:
+        parts.append(f"Service {parameters['service']}.")
+    if parameters["state"]:
+        parts.append(f"State {parameters['state']}.")
+    if parameters["output"]:
+        parts.append(parameters["output"])
+    return clean(" ".join(parts), 3000)
+
+
+def payload(config: Mapping[str, Any], environ: Mapping[str, str]) -> dict[str, Any]:
+    parameters = event_parameters(environ)
+    message = build_message(parameters)
+    parameters["message"] = message
+    parameters["alert_text"] = message
+    return {"callee": config["callee"], "callflow": config["callflow"], "parameters": parameters}
+
+
+def queue_call(config: Mapping[str, Any], body: Mapping[str, Any]) -> str:
+    request = Request(
+        f"{config['url']}/api/call/v2",
+        data=json.dumps(body, ensure_ascii=False).encode("utf-8"),
+        method="POST",
+        headers={
+            "Authorization": f"Bearer {config['api_key']}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+            "User-Agent": "VoiceCast-Checkmk/1.0",
+        },
+    )
+    try:
+        with build_opener(NoRedirect()).open(request, timeout=config["timeout"]) as response:
+            status = response.getcode()
+            raw = response.read(65536)
+    except HTTPError as exc:
+        raise RuntimeError(f"VoiceCast returned HTTP {exc.code}") from exc
+    except (URLError, TimeoutError, OSError) as exc:
+        raise RuntimeError("VoiceCast request failed; check Calls before retrying") from exc
+    if status != 201:
+        raise RuntimeError(f"VoiceCast returned HTTP {status}")
+    try:
+        result = json.loads(raw)
+        call_uuid = result["uuid"]
+    except (json.JSONDecodeError, KeyError, TypeError) as exc:
+        raise RuntimeError("VoiceCast returned an invalid success response") from exc
+    if not isinstance(call_uuid, str) or not call_uuid:
+        raise RuntimeError("VoiceCast returned an invalid call UUID")
+    return call_uuid
+
+
+def main(argv: list[str], environ: Mapping[str, str]) -> int:
+    try:
+        config = load_config(environ)
+        body = payload(config, environ)
+        if "--dry-run" in argv:
+            print(json.dumps(body, ensure_ascii=False, indent=2))
+            return 0
+        call_uuid = queue_call(config, body)
+        print(f"Queued VoiceCast call {call_uuid}")
+        return 0
+    except (ConfigurationError, RuntimeError) as exc:
+        print(f"VoiceCast notification failed: {exc}", file=sys.stderr)
+        # A timeout may occur after a call was saved. A final failure prevents
+        # Checkmk from retrying automatically and creating a duplicate call.
+        return 2
+
+
+if __name__ == "__main__":
+    raise SystemExit(main(sys.argv[1:], os.environ))

@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title id="title">PHP</title>
+  <rect width="64" height="64" rx="14" fill="#777bb4"/>
+  <path d="M12 21h12c7 0 11 3.4 9.5 10.4C32 38.3 27.7 42 20.8 42h-4l-1.6 8H8l5.8-29Zm6.4 6-1.8 9h4.2c3 0 4.8-1.3 5.4-4.5.7-3.1-.7-4.5-3.8-4.5h-4Z" fill="#fff"/>
+  <path d="M36.5 14h7.2l-1.5 7h4.2c6.7 0 9.3 3.4 8 9.7L52 42h-7.2l2.2-10.6c.6-3-.2-4.4-2.8-4.4H41l-3 15h-7.2l5.7-28Z" fill="#fff"/>
+</svg>
